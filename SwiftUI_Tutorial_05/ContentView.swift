@@ -14,6 +14,32 @@ struct ContentView: View {
     @State private var alertText = ""
     @State private var selected = 0
     
+    @State var singleTapped = false
+    @State var doubleTapped = false
+    @State var tripleTapped = false
+    
+    var singleTap: some Gesture {
+        TapGesture()
+            .onEnded{ _ in
+                print("한 번 탭함")
+                singleTapped.toggle()
+            }
+    }
+    var doubleTap: some Gesture {
+        TapGesture(count: 2)
+            .onEnded{ _ in
+                print("두 번 탭함")
+                doubleTapped.toggle()
+            }
+    }
+    var tripleTap: some Gesture {
+        TapGesture(count: 3)
+            .onEnded{ _ in
+                print("세 번 탭함")
+                tripleTapped.toggle()
+            }
+    }
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 10) {
@@ -22,6 +48,25 @@ struct ContentView: View {
                     .bold()
                 Text("우측 상단의 땡땡땡을 눌러주세요!")
                     .font(.subheadline)
+                Spacer()
+                    .frame(height: 100)
+                HStack {
+                    Circle()
+                        .fill(singleTapped ? .red : .gray)
+                        .frame(width: 100, height: 100, alignment: .center)
+                        .overlay(Text("싱글 탭").circleTitle())
+                        .gesture(singleTap)
+                    Circle()
+                        .fill(doubleTapped ? .yellow : .gray)
+                        .frame(width: 100, height: 100, alignment: .center)
+                        .overlay(Text("더블 탭").circleTitle())
+                        .gesture(doubleTap)
+                    Circle()
+                        .fill(tripleTapped ? .green : .gray)
+                        .frame(width: 100, height: 100, alignment: .center)
+                        .overlay(Text("트리플 탭").circleTitle())
+                        .gesture(tripleTap)
+                }
             }
             .navigationTitle("타이틀")
             .toolbar(content: {
@@ -83,5 +128,17 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+struct CircleTitle: ViewModifier {
+    func body(content: Content) -> some View {
+        content.font(.system(size: 24)).foregroundColor(.white)
+    }
+}
+
+extension View {
+    func circleTitle() -> some View {
+        modifier(CircleTitle())
     }
 }
